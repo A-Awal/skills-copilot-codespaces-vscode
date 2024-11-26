@@ -1,20 +1,21 @@
 //create webserver
 var http = require('http');
-var url = require('url');
-var querystring = require('querystring');
 var fs = require('fs');
 
-var comments = [];
+//create server
+http.createServer(function (req, res) {
+  //open file
+  fs.readFile('comments.json', 'utf8', function (err, data) {
+    //if there is an error, throw it
+    if (err) throw err;
+    //write header
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    //write the data
+    res.write(data);
+    //end the response
+    res.end();
+  });
+}).listen(3000);
 
-var server = http.createServer(function(request, response){
-    var url_parts = url.parse(request.url);
-    if(url_parts.pathname === '/comment' && request.method === 'POST'){
-        var body = '';
-        request.on('data', function(chunk){
-            body += chunk;
-        });
-        request.on('ed', function(){
-            var comment = querystring.parse(body);
-            comments.push(comment);
-            response.writeHead(200, {'Content-Type': 'text/plain'});
-            response.end('Thanks for your comment!\n'
+//log to console
+console.log('Server running at http://localhost:3000/');
